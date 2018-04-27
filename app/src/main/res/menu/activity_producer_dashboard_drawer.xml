@@ -9,11 +9,10 @@
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/action_settings" />
         <item
-            android:id="@+id/nav_login"
-            android:icon="@drawable/ic_login_black_24dp"
-            android:title="@string/title_activity_login" />
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="@string/action_logout" />
 
     </group>
-
 
 </menu>
