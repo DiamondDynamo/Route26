@@ -1,24 +1,35 @@
 package com.i4i.hcvb.route26;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.support.v4.app.LoaderManager;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.support.v4.content.Loader;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
-import io.swagger.client.ApiException;
-import io.swagger.client.api.EventApi;
+import io.swagger.client.model.Address;
 import io.swagger.client.model.Event;
+import io.swagger.client.model.Location;
 
-public class ResultsActivity extends AppCompatActivity {
+public class ResultsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Event>> {
+
+    EventAdapter eventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,23 +38,71 @@ public class ResultsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        eventAdapter = new EventAdapter(this, new ArrayList<Event>());
+
         handleIntent(getIntent());
 
-        EventApi eventApi = new EventApi();
-        try {
-            eventApi.getEventList(0, 10, 11);
-        } catch (ApiException e){
-            System.out.println(e.getMessage());
-        }
 
-        final ListView listView = (ListView) findViewById(R.id.browse_list);
+        ListView listView = (ListView) findViewById(R.id.browse_list);
+        final TextView noEvent = (TextView) findViewById(R.id.no_events);
 
-        ArrayList<String> list = new ArrayList<>();
-        list.add(Event.class.getName());
+        listView.setAdapter(eventAdapter);
+        listView.setEmptyView(noEvent);
 
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.browse_item, R.id.browse_name, list);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Event selEvent = (Event) parent.getItemAtPosition(position);
+                String name = selEvent.getName();
+                Location srcLocation = selEvent.getLocation();
+                Address srcAddress = srcLocation.getAddress();
+                android.location.Address address = new android.location.Address(Locale.US);
 
+
+//                address.setLatitude(srcLocation.getLatitude().doubleValue());
+//                address.setLongitude(srcLocation.getLongitude().doubleValue());
+                address.setPostalCode(srcAddress.getZip());
+                if(srcAddress.getName() != null) {
+                    address.setAddressLine(0, srcAddress.getName());
+                }
+                    address.setAddressLine(1, srcAddress.getStreet());
+                    address.setAddressLine(2, srcAddress.getCity());
+                    address.setAddressLine(3, srcAddress.getState());
+                    address.setPostalCode(srcAddress.getZip());
+
+
+//                String startTime = selEvent.getStartDatetime().toString();
+//                String endTime = selEvent.getEndDatetime().toString();
+                String description = selEvent.getDescription();
+                Intent intent = new Intent(getApplicationContext(), EventDetailsActivity.class);
+                intent.putExtra("EventName", name);
+                intent.putExtra("EventAddr", address);
+                intent.putExtra("EventDesc", description);
+
+                setResult(RESULT_OK, intent);
+                startActivity(intent);
+            }
+        });
+
+        getSupportLoaderManager().initLoader(1, null, this).forceLoad();
     }
+
+    @Override
+    public Loader<List<Event>> onCreateLoader(int id, Bundle args) {
+        return new EventLoader(ResultsActivity.this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Event>> loader, List<Event> data) {
+        eventAdapter.setEvents(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Event>> loader) {
+        eventAdapter.setEvents(new ArrayList<Event>());
+    }
+
+
 
     @Override
     protected void onNewIntent(Intent intent){

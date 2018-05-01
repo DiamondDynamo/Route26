@@ -1,11 +1,18 @@
 package com.i4i.hcvb.route26;
 
+import android.content.Intent;
+import android.location.Address;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.net.URI;
 
 public class EventDetailsActivity extends AppCompatActivity {
 
@@ -16,14 +23,53 @@ public class EventDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+
+        String name = getIntent().getStringExtra("EventName");
+
+        setTitle(name);
+
+        Address address = getIntent().getParcelableExtra("EventAddr");
+        String description = getIntent().getStringExtra("EventDesc");
+
+        TextView descView = findViewById(R.id.details_desc_text);
+        TextView locView = findViewById(R.id.details_loc);
+
+
+        //TODO: Start/End DateTime
+
+        String addrName = address.getAddressLine(0);
+        String addrStreet = address.getAddressLine(1);
+        String addrCity = address.getAddressLine(2);
+        String addrState = address.getAddressLine(3);
+        String addrZip = address.getPostalCode();
+
+        String[] addrArray = { address.getAddressLine(1), address.getAddressLine(2), address.getAddressLine(3), address.getPostalCode()};
+        String addr = addrArray[0] + "\n" + addrArray[1] + ", " + addrArray[2] + "\n" + addrArray[3];
+        descView.setText(description);
+        locView.setText(addr);
+
+        String outAddrString = "geo:0,0?q=" + addrStreet + "+" + addrCity + ",+" + addrState + "+" + addrZip;
+
+        outAddrString = outAddrString.replaceAll(" ", "+");
+
+        final Uri outAddr = Uri.parse(outAddrString);
+
+        locView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                showMap(outAddr);
             }
         });
+
+    }
+
+    public void showMap(Uri geoLoc){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geoLoc);
+        if(intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
 }

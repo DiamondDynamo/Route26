@@ -8,6 +8,15 @@
     <string name="no_recent">No recent searches found</string>
     <string name="no_manage">No events to manage</string>
 
+    <string name="desc_title">Description</string>
+
+    <string name="no_date">No date/time found</string>
+    <string name="no_genre">No genre found</string>
+    <string name="no_location">No location found</string>
+    <string name="no_desc">No description found</string>
+
+
+
     <string name="recent_header">Recent Searches</string>
     <string name="favorites_header">Favorite Events</string>
     <string name="manage_header">Manage Events</string>

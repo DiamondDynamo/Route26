@@ -91,8 +91,7 @@ public class ConsumerDashboard extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.consumer_dashboard, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
+        SearchView searchView = (SearchView) searchItem.getActionView();
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 //        ComponentName componentName = new ComponentName(context, )
 //TODO: Figure out how searches are supposed to work
