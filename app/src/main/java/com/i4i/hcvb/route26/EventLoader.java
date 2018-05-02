@@ -39,11 +39,11 @@ public class EventLoader extends AsyncTaskLoader<List<Event>> {
                     Address address = new Address();
 //                    OffsetDateTime startDateTime = new OffsetDateTime();
 
-                    address.setCity("Littlestown");
-                    address.setName("home");
+                    address.setCity("Huntingdon");
+                    address.setName("Juniata College");
                     address.setState("PA");
-                    address.setZip("17340");
-                    address.setStreet("545 Mud College Rd");
+                    address.setZip("16652");
+                    address.setStreet("1700 Moore St");
                     location.setAddress(address);
                     event.setName("Test " + i);
                     event.setLocation(location);

@@ -52,7 +52,7 @@ import io.swagger.client.auth.OAuth;
 
 public class ApiClient {
 
-    private String basePath = "http://louis-frank.de:8080/v1";
+    private String basePath = "http://louis-frank.de/v1";
     private boolean debugging = false;
     private Map<String, String> defaultHeaderMap = new HashMap<String, String>();
     private String tempFolderPath = null;
