@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.URI;
+import java.util.Calendar;
 
 public class EventDetailsActivity extends AppCompatActivity {
 
@@ -34,9 +35,14 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         TextView descView = findViewById(R.id.details_desc_text);
         TextView locView = findViewById(R.id.details_loc);
+        TextView timeView = findViewById(R.id.details_date_time);
 
 
         //TODO: Start/End DateTime
+
+//        Calendar startTime = getIntent().getParcelableExtra("EventStart");
+//        String endTime = getIntent().getStringExtra("EventEnd");
+//        timeView.setText(startTime.toString());
 
         String addrName = address.getAddressLine(0);
         String addrStreet = address.getAddressLine(1);

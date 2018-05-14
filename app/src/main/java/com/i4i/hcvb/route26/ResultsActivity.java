@@ -20,6 +20,8 @@ import android.widget.Toast;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,6 +32,7 @@ import io.swagger.client.model.Location;
 public class ResultsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Event>> {
 
     EventAdapter eventAdapter;
+    String query = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,8 @@ public class ResultsActivity extends AppCompatActivity implements LoaderManager.
         setSupportActionBar(toolbar);
 
         eventAdapter = new EventAdapter(this, new ArrayList<Event>());
+
+
 
         handleIntent(getIntent());
 
@@ -71,13 +76,22 @@ public class ResultsActivity extends AppCompatActivity implements LoaderManager.
                     address.setPostalCode(srcAddress.getZip());
 
 
-//                String startTime = selEvent.getStartDatetime().toString();
+                org.threeten.bp.OffsetDateTime srcStartTime = selEvent.getStartDatetime();
+                Calendar startDate = Calendar.getInstance();
+//                startDate.set(srcStartTime.getYear(), srcStartTime.getMonthValue(), srcStartTime.getDayOfMonth(), srcStartTime.getHour(), srcStartTime.getMinute());
+
+//                Calendar startDate = new Calendar.Builder().setCalendarType("iso8601").setDate(srcStartTime.getYear(), srcStartTime.getMonthValue(), srcStartTime.getDayOfMonth()).build();
+//                .set(srcStartTime.getYear(), srcStartTime.getMonthValue(), srcStartTime.getDayOfMonth(), srcStartTime.getHour(), srcStartTime.getMinute());
+
 //                String endTime = selEvent.getEndDatetime().toString();
+
                 String description = selEvent.getDescription();
                 Intent intent = new Intent(getApplicationContext(), EventDetailsActivity.class);
                 intent.putExtra("EventName", name);
                 intent.putExtra("EventAddr", address);
                 intent.putExtra("EventDesc", description);
+//                intent.putExtra("EventStart", startDate);
+//                intent.putExtra("EventEnd", endTime);
 
                 setResult(RESULT_OK, intent);
                 startActivity(intent);
@@ -112,7 +126,7 @@ public class ResultsActivity extends AppCompatActivity implements LoaderManager.
 
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
+            query = intent.getStringExtra(SearchManager.QUERY);
 
         }
     }

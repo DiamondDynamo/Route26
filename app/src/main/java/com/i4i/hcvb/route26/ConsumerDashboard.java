@@ -22,6 +22,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.support.v7.widget.SearchView;
 
+import java.util.List;
+
+import io.swagger.client.model.Event;
+
 public class ConsumerDashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -93,8 +97,8 @@ public class ConsumerDashboard extends AppCompatActivity
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 //        ComponentName componentName = new ComponentName(context, )
-//TODO: Figure out how searches are supposed to work
 
         final SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
             @Override

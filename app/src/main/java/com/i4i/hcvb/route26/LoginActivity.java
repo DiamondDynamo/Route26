@@ -30,9 +30,19 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.okhttp.Call;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import io.swagger.client.ApiClient;
+import io.swagger.client.ApiException;
+import io.swagger.client.Pair;
+import io.swagger.client.auth.Authentication;
+import io.swagger.client.model.Member;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -45,6 +55,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+
+    ApiClient apiClient = new ApiClient();
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -91,13 +103,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-//                attemptLogin();
-                SharedPreferences preferences = getSharedPreferences("logState", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("loggedIn", true);
-                editor.apply();
-                Intent intent = new Intent(getApplicationContext(), ProducerDashboardActivity.class);
-                startActivity(intent);
+                attemptLogin();
             }
         });
 
@@ -112,6 +118,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivity(intent);
             }
         });
+    }
+
+    private void stateChange(){
+        SharedPreferences preferences = getSharedPreferences("logState", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("loggedIn", true);
+        editor.apply();
+        Intent intent = new Intent(getApplicationContext(), ProducerDashboardActivity.class);
+        startActivity(intent);
     }
 
     private void populateAutoComplete() {
@@ -222,7 +237,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+//        return email.contains("@");
+        return true;
     }
 
     private boolean isPasswordValid(String password) {
@@ -338,6 +354,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+//            Map<String, Authentication> authenticationMap = apiClient.getAuthentications();
+//            Authentication authMember = authenticationMap.get(mEmail);
+//            String testString = authMember.toString();
+//            Toast.makeText(getApplicationContext(), testString, Toast.LENGTH_SHORT).show();
+
+
             try {
                 // Simulate network access.
                 Thread.sleep(2000);
@@ -364,6 +386,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success) {
                 finish();
+                stateChange();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

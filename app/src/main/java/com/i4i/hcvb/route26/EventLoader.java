@@ -23,7 +23,7 @@ public class EventLoader extends AsyncTaskLoader<List<Event>> {
 
     private List<Event> eventList = new ArrayList<Event>();
 
-    boolean DEBUG = true;
+    boolean DEBUG = false;
 
     @Override
     public List<Event> loadInBackground() {
