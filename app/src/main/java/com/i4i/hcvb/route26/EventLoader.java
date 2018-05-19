@@ -30,6 +30,7 @@ public class EventLoader extends AsyncTaskLoader<List<Event>> {
 
         EventApi eventApi = new EventApi();
         try {
+            eventApi.getEventList(null, null, null);
             for (int i = 1; i < 11; i++) {
 
                 Event event = new Event();

@@ -13,6 +13,7 @@
 
 package io.swagger.client.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
@@ -33,7 +34,7 @@ import org.threeten.bp.OffsetDateTime;
  */
 //Todo: annotation
 //@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-04-25T12:47:25.920-04:00")
-public class Event {
+public class Event implements Serializable {
   @SerializedName("name")
   private String name = null;
 

@@ -44,6 +44,15 @@ public class ProducerDashboardActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+
+        Button createButton = findViewById(R.id.create_event);
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CreateEventActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -95,6 +104,12 @@ public class ProducerDashboardActivity extends AppCompatActivity
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("loggedIn", false);
             editor.apply();
+
+            SharedPreferences loginPrefs = getSharedPreferences("loginCredentials", MODE_PRIVATE);
+            SharedPreferences.Editor loginEditor = loginPrefs.edit();
+            loginEditor.clear();
+            loginEditor.apply();
+
             Intent intent = new Intent(getApplicationContext(), ConsumerDashboard.class);
             startActivity(intent);
             return(true);

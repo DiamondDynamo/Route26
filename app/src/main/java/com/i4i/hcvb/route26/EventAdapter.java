@@ -14,7 +14,7 @@ import io.swagger.client.model.Event;
 
 public class EventAdapter extends BaseAdapter {
     private LayoutInflater inflater;
-    private List<Event> events = new ArrayList<Event>();
+    private List<Event> events;
     EventAdapter(Context context, List<Event> events) {
         this.events = events;
         inflater = LayoutInflater.from(context);

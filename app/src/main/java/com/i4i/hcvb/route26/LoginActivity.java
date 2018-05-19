@@ -30,19 +30,16 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.squareup.okhttp.Call;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
-import io.swagger.client.Pair;
-import io.swagger.client.auth.Authentication;
-import io.swagger.client.model.Member;
+import io.swagger.client.Configuration;
+import io.swagger.client.api.MemberApi;
+import io.swagger.client.auth.HttpBasicAuth;
+import io.swagger.client.model.MemberPrivate;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -342,11 +339,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
+        private final String mUsername;
         private final String mPassword;
 
         UserLoginTask(String email, String password) {
-            mEmail = email;
+            mUsername = email;
             mPassword = password;
         }
 
@@ -355,28 +352,47 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
 //            Map<String, Authentication> authenticationMap = apiClient.getAuthentications();
-//            Authentication authMember = authenticationMap.get(mEmail);
+//            Authentication authMember = authenticationMap.get(mUsername);
 //            String testString = authMember.toString();
 //            Toast.makeText(getApplicationContext(), testString, Toast.LENGTH_SHORT).show();
 
+            MemberApi memberApi = new MemberApi();
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+            ApiClient apiClient = Configuration.getDefaultApiClient();
+            HttpBasicAuth basicAuth = (HttpBasicAuth) apiClient.getAuthentication("basicAuth");
+            basicAuth.setUsername(mUsername);
+            basicAuth.setPassword(mPassword);
+
+            try{
+                MemberPrivate result = memberApi.getMemberByNamePrivate(mUsername);
+                SharedPreferences preferences = getSharedPreferences("loginCredentials", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("username", mUsername);
+                editor.putString("password", mPassword);
+                editor.apply();
+                return true;
+            } catch (ApiException e){
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
+
+//            try {
+//                // Simulate network access.
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                return false;
+//            }
+//
+//            for (String credential : DUMMY_CREDENTIALS) {
+//                String[] pieces = credential.split(":");
+//                if (pieces[0].equals(mUsername)) {
+//                    // Account exists, return true if the password matches.
+//                    return pieces[1].equals(mPassword);
+//                }
+//            }
 
             // TODO: register the new account here.
-            return true;
+//            return true;
         }
 
         @Override

@@ -16,7 +16,6 @@
     <string name="no_desc">No description found</string>
 
 
-
     <string name="recent_header">Recent Searches</string>
     <string name="favorites_header">Favorite Events</string>
     <string name="manage_header">Manage Events</string>
@@ -138,4 +137,19 @@
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="submit">Submit</string>
+    <string name="create_event_name">Event Name</string>
+    <string name="create_street_addr">Street Address</string>
+    <string name="create_state">State</string>
+    <string name="create_city">City</string>
+    <string name="create_zip">Zip Code</string>
+    <string name="create_no_date_set">No Date Set</string>
+    <string name="create_no_time_set">No Time set</string>
+    <string name="create_description">Description</string>
+    <string name="create_set_date">Set Date</string>
+    <string name="create_set_time">Set Time</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_set_start_time">Set Start Time</string>
+    <string name="create_set_end_time">Set End Time</string>
 </resources>
