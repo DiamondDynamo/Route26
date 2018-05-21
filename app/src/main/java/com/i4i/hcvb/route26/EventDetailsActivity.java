@@ -4,16 +4,10 @@ import android.content.Intent;
 import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.net.URI;
-import java.util.Calendar;
 
 public class EventDetailsActivity extends AppCompatActivity {
 
@@ -35,14 +29,16 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         TextView descView = findViewById(R.id.details_desc_text);
         TextView locView = findViewById(R.id.details_loc);
-        TextView timeView = findViewById(R.id.details_date_time);
+        TextView timeView = findViewById(R.id.details_start_date_time);
 
 
-        //TODO: Start/End DateTime
+        //TODO: Modify API to properly give start and end dateTimes (Then commented code here and in EventDetailsActivity should work)
 
 //        Calendar startTime = getIntent().getParcelableExtra("EventStart");
 //        String endTime = getIntent().getStringExtra("EventEnd");
-//        timeView.setText(startTime.toString());
+
+//        String startTimeString = startTime.get(Calendar.MONTH) + "/" + startTime.get(Calendar.DAY_OF_MONTH) + "/" + startTime.get(Calendar.YEAR) + "\n" + startTime.get(Calendar.HOUR) + ":" + startTime.get(Calendar.MINUTE) + " " + startTime.get(Calendar.AM_PM);
+//        timeView.setText(startTimeString);
 
         String addrName = address.getAddressLine(0);
         String addrStreet = address.getAddressLine(1);

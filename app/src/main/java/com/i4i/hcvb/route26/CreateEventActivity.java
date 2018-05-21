@@ -7,6 +7,7 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,8 +24,11 @@ import org.threeten.bp.LocalTime;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZoneOffset;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import io.swagger.client.ApiClient;
@@ -87,7 +91,7 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         mStartYear = year;
                         String outYear = String.valueOf(year);
-                        mStartMonth = month;
+                        mStartMonth = month + 1;
                         String outMonth = String.valueOf(month + 1);
                         mStartDay = dayOfMonth;
                         String outDay = String.valueOf(dayOfMonth);
@@ -118,11 +122,29 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
                 TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        boolean pm = false;
                         mStartHour = hourOfDay;
+                        if(hourOfDay > 11) {
+                            pm = true;
+                            if (hourOfDay > 12) {
+                                hourOfDay = hourOfDay - 12;
+
+                            }
+                        } else if(hourOfDay == 0){
+                            hourOfDay = 12;
+                        }
                         String outHour = String.valueOf(hourOfDay);
                         mStartMinute = minute;
                         String outMinute = String.valueOf(minute);
+                        if(minute < 10){
+                            outMinute = 0 + outMinute;
+                        }
                         String outTime = outHour + ":" + outMinute;
+                        if(pm){
+                            outTime = outTime + " PM";
+                        } else{
+                            outTime = outTime + " AM";
+                        }
                         startTimeDisp.setText(outTime);
                     }
                 };
@@ -153,7 +175,7 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         mEndYear = year;
                         String outYear = String.valueOf(year);
-                        mEndMonth = month;
+                        mEndMonth = month + 1;
                         String outMonth = String.valueOf(month + 1);
                         mEndDay = dayOfMonth;
                         String outDay = String.valueOf(dayOfMonth);
@@ -184,11 +206,29 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
                 TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        boolean pm = false;
                         mEndHour = hourOfDay;
+                        if(hourOfDay > 11) {
+                            pm = true;
+                            if (hourOfDay > 12) {
+                                hourOfDay = hourOfDay - 12;
+
+                            }
+                        } else if(hourOfDay == 0){
+                            hourOfDay = 12;
+                        }
                         String outHour = String.valueOf(hourOfDay);
                         mEndMinute = minute;
                         String outMinute = String.valueOf(minute);
+                        if(minute < 10){
+                            outMinute = 0 + outMinute;
+                        }
                         String outTime = outHour + ":" + outMinute;
+                        if(pm){
+                            outTime = outTime + " PM";
+                        } else{
+                            outTime = outTime + " AM";
+                        }
                         endTimeDisp.setText(outTime);
                     }
                 };
@@ -210,13 +250,21 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
                 Event newEvent = new Event();
                 Location outLoc = new Location();
                 Address outAddr = new Address();
+                android.location.Address exAddr = new android.location.Address(Locale.US);
+                Geocoder coder = new Geocoder(getApplicationContext());
                 newEvent.setName(nameField.getText().toString());
+
 
 
                 outAddr.setStreet(streetField.getText().toString());
                 outAddr.setCity(cityField.getText().toString());
                 outAddr.setState(stateField.getText().toString());
                 outAddr.setZip(zipField.getText().toString());
+                outAddr.setName("name");
+
+                outLoc.setLatitude(BigDecimal.valueOf(6.027456183070403));
+                outLoc.setLongitude(BigDecimal.valueOf(0.8008281904610115));
+                outLoc.setName("name");
                 outLoc.setAddress(outAddr);
                 newEvent.setLocation(outLoc);
 
@@ -224,6 +272,7 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
                 LocalTime startTime = LocalTime.of(mStartHour, mStartMinute);
 
                 OffsetDateTime startDateTime = OffsetDateTime.of(startDate, startTime, ZoneOffset.ofHours(-4));
+//                OffsetDateTime startDateTime = OffsetDateTime.of(mStartYear, mStartMonth, mStartDay, mStartHour, mStartMinute, 0, 0, ZoneOffset.ofHours(-4));
                 newEvent.setStartDatetime(startDateTime);
 
 
@@ -231,9 +280,11 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
                 LocalTime endTime = LocalTime.of(mEndHour, mEndMinute);
 
                 OffsetDateTime endDateTime = OffsetDateTime.of(endDate, endTime, ZoneOffset.ofHours(-4));
+//                OffsetDateTime endDateTime = OffsetDateTime.of(mEndYear, mEndMonth, mEndDay, mEndHour, mEndMinute, 0, 0, ZoneOffset.ofHours(-4));
                 newEvent.setEndDatetime(endDateTime);
 
                 newEvent.setDescription(descField.getText().toString());
+
 
                 Bundle args = new Bundle();
                 args.putSerializable("event", newEvent);
@@ -267,7 +318,6 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void onLoaderReset(Loader<Event> loader){
-        Toast.makeText(getApplicationContext(), "Loader reset", Toast.LENGTH_SHORT).show();
     }
 
     private static class PostAsyncTask extends AsyncTaskLoader<Event>{

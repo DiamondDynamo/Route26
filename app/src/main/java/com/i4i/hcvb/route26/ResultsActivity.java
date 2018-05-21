@@ -63,9 +63,6 @@ public class ResultsActivity extends AppCompatActivity implements LoaderManager.
                 Address srcAddress = srcLocation.getAddress();
                 android.location.Address address = new android.location.Address(Locale.US);
 
-
-//                address.setLatitude(srcLocation.getLatitude().doubleValue());
-//                address.setLongitude(srcLocation.getLongitude().doubleValue());
                 address.setPostalCode(srcAddress.getZip());
                 if(srcAddress.getName() != null) {
                     address.setAddressLine(0, srcAddress.getName());
@@ -76,14 +73,14 @@ public class ResultsActivity extends AppCompatActivity implements LoaderManager.
                     address.setPostalCode(srcAddress.getZip());
 
 
-                org.threeten.bp.OffsetDateTime srcStartTime = selEvent.getStartDatetime();
+                org.threeten.bp.OffsetDateTime srcStartDateTime = selEvent.getStartDatetime();
+                org.threeten.bp.OffsetDateTime srcEndDateTime = selEvent.getEndDatetime();
                 Calendar startDate = Calendar.getInstance();
-//                startDate.set(srcStartTime.getYear(), srcStartTime.getMonthValue(), srcStartTime.getDayOfMonth(), srcStartTime.getHour(), srcStartTime.getMinute());
+                Calendar endDate = Calendar.getInstance();
 
-//                Calendar startDate = new Calendar.Builder().setCalendarType("iso8601").setDate(srcStartTime.getYear(), srcStartTime.getMonthValue(), srcStartTime.getDayOfMonth()).build();
-//                .set(srcStartTime.getYear(), srcStartTime.getMonthValue(), srcStartTime.getDayOfMonth(), srcStartTime.getHour(), srcStartTime.getMinute());
+//                startDate.set(srcStartDateTime.getYear(), srcStartDateTime.getMonthValue(), srcStartDateTime.getDayOfMonth(), srcStartDateTime.getHour(), srcStartDateTime.getMinute());
+//                endDate.set(srcEndDateTime.getYear(), srcEndDateTime.getMonthValue(), srcEndDateTime.getDayOfMonth(), srcEndDateTime.getHour(), srcEndDateTime.getMinute());
 
-//                String endTime = selEvent.getEndDatetime().toString();
 
                 String description = selEvent.getDescription();
                 Intent intent = new Intent(getApplicationContext(), EventDetailsActivity.class);

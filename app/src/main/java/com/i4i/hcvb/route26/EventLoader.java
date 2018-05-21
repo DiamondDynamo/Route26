@@ -31,27 +31,10 @@ public class EventLoader extends AsyncTaskLoader<List<Event>> {
         EventApi eventApi = new EventApi();
         try {
             eventApi.getEventList(null, null, null);
-            for (int i = 1; i < 11; i++) {
+            for (int i = 1; i < 100; i++) {
 
                 Event event = new Event();
-                //TODO: Remove debug tools
-                if(DEBUG) {
-                    Location location = new Location();
-                    Address address = new Address();
-//                    OffsetDateTime startDateTime = new OffsetDateTime();
-
-                    address.setCity("Huntingdon");
-                    address.setName("Juniata College");
-                    address.setState("PA");
-                    address.setZip("16652");
-                    address.setStreet("1700 Moore St");
-                    location.setAddress(address);
-                    event.setName("Test " + i);
-                    event.setLocation(location);
-                    event.setDescription("This is a test");
-                }else {
                     event = eventApi.getEventByID(i);
-                }
                 eventList.add(event);
             }
         } catch (ApiException e) {

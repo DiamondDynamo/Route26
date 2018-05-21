@@ -1,6 +1,10 @@
 package com.i4i.hcvb.route26;
 
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,10 +19,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import java.math.BigInteger;
+
+import io.swagger.client.ApiException;
+import io.swagger.client.api.MemberApi;
+import io.swagger.client.model.Member;
+import io.swagger.client.model.MemberPublic;
 
 public class ProducerDashboardActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<MemberPublic> {
 
+    MemberPublic mMember;
+    long mMemberId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +41,14 @@ public class ProducerDashboardActivity extends AppCompatActivity
         setContentView(R.layout.activity_producer_dashboard);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        SharedPreferences preferences = getSharedPreferences("loginCredentials", MODE_PRIVATE);
+        String uName = preferences.getString("username", null);
+
+        Bundle args = new Bundle();
+        args.putString("name", uName);
+
+        getLoaderManager().initLoader(3, args, this).forceLoad();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -53,6 +76,9 @@ public class ProducerDashboardActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+
+        ListView manageList = findViewById(R.id.manage_list);
+        //TODO: Modify API so that events can return host IDs, allowing identifcation of owned events
     }
 
     @Override
@@ -118,5 +144,41 @@ public class ProducerDashboardActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public Loader<MemberPublic> onCreateLoader(int id, Bundle args){
+        return new GetMember(ProducerDashboardActivity.this, args.getString("name"));
+    }
+
+    @Override
+    public void onLoadFinished(Loader<MemberPublic> loader, MemberPublic data){
+        mMember = data;
+    }
+
+    @Override
+    public void onLoaderReset(Loader<MemberPublic> loader){
+    }
+
+    private static class GetMember extends AsyncTaskLoader<MemberPublic>{
+        MemberPublic mMember;
+        String mUsername;
+        GetMember(Context context, String inName){
+            super(context);
+            mUsername = inName;
+        }
+
+        @Override
+        public MemberPublic loadInBackground(){
+            try {
+                MemberApi memberApi = new MemberApi();
+                mMember = memberApi.getMemberByName(mUsername);
+
+            } catch (ApiException e){
+                System.err.println("Exception when calling MemberApi.getMemberByName");
+                e.printStackTrace();
+            }
+            return mMember;
+        }
     }
 }
