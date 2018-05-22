@@ -52,6 +52,7 @@ import io.swagger.client.auth.OAuth;
 
 public class ApiClient {
 
+    //TODO: Change basePath to reflect the path of the final server
     private String basePath = "http://louis-frank.de/v1";
     private boolean debugging = false;
     private Map<String, String> defaultHeaderMap = new HashMap<String, String>();
