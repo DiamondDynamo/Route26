@@ -1,45 +1,51 @@
+/*
+ Name: ConsumerDashboard.java
+ Written by: Charles Bein
+ Description: Initial splash screen and homepage for non-members
+ */
+
 package com.i4i.hcvb.route26;
 
 import android.app.SearchManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.support.v7.widget.SearchView;
-
-import java.util.List;
-
-import io.swagger.client.model.Event;
 
 public class ConsumerDashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    //Objects to be used when implementing favorites and recent lists
     private ListView recList, favList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Function that runs every time the activity is opened
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consumer_dashboard);
 
-        if(loggedInCheck()){
+        // If the user has previously signed in, go immediately to the Producer Dashboard
+        if (loggedInCheck()) {
             Intent intent = new Intent(getApplicationContext(), ProducerDashboardActivity.class);
             startActivity(intent);
         }
+
+
+        setTitle("Route 26 Artbeat");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,13 +81,15 @@ public class ConsumerDashboard extends AppCompatActivity
         });
     }
 
-    public boolean loggedInCheck(){
+    public boolean loggedInCheck() {
+        //Function to check if the user is marked as logged in
         SharedPreferences preferences = getSharedPreferences("logState", MODE_PRIVATE);
         return preferences.getBoolean("loggedIn", false);
     }
 
     @Override
     public void onBackPressed() {
+        //Auto-generated method for sliding drawer
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -98,7 +106,6 @@ public class ConsumerDashboard extends AppCompatActivity
         SearchView searchView = (SearchView) searchItem.getActionView();
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//        ComponentName componentName = new ComponentName(context, )
 
         final SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
             @Override
@@ -125,13 +132,6 @@ public class ConsumerDashboard extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_search) {
-//            Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-//            startActivity(intent);
-//            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }

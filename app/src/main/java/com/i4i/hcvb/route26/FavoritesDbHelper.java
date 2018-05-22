@@ -1,3 +1,10 @@
+/*
+ Name: FavoritesDbHelper.java
+ Written by: Charles Bein
+ Description: DbHelper for storing user's favorites locally
+ NOTE: not up to date (should have start and end dates), or implemented
+ */
+
 package com.i4i.hcvb.route26;
 
 
@@ -17,16 +24,16 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
 
     public static final String SQL_DELETE = "DROP TABLE IF EXISTS " + FavoritesContract.FavoritesEntry.TABLE_NAME;
 
-    public FavoritesDbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
+    public FavoritesDbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
-    public FavoritesDbHelper (Context context) {
+    public FavoritesDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db){
+    public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_FAVORITES);
     }
 

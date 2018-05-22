@@ -1,3 +1,10 @@
+/*
+ Name: EventAdapter.java
+ Written by: Charles Bein
+ Description: Adapter for ListView in ResultsActivity
+ */
+
+
 package com.i4i.hcvb.route26;
 
 import android.content.Context;
@@ -7,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.swagger.client.model.Event;
@@ -15,6 +21,7 @@ import io.swagger.client.model.Event;
 public class EventAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<Event> events;
+
     EventAdapter(Context context, List<Event> events) {
         this.events = events;
         inflater = LayoutInflater.from(context);
@@ -23,7 +30,7 @@ public class EventAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         Event event = (Event) getItem(position);
-        if(view == null) {
+        if (view == null) {
             view = inflater.inflate(R.layout.browse_item, null);
         }
         TextView eventName = (TextView) view.findViewById(R.id.browse_name);
@@ -38,12 +45,12 @@ public class EventAdapter extends BaseAdapter {
     }
 
     @Override
-    public long getItemId(int position){
+    public long getItemId(int position) {
         return position;
     }
 
     @Override
-    public int getCount(){
+    public int getCount() {
         return events.size();
     }
 

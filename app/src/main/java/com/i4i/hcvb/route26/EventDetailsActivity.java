@@ -1,3 +1,9 @@
+/*
+ Name: EventDetailsActivity.java
+ Written by: Charles Bein
+ Description: Display details about event selected in ResultsActivity
+ */
+
 package com.i4i.hcvb.route26;
 
 import android.content.Intent;
@@ -17,7 +23,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
 
         String name = getIntent().getStringExtra("EventName");
@@ -46,11 +51,12 @@ public class EventDetailsActivity extends AppCompatActivity {
         String addrState = address.getAddressLine(3);
         String addrZip = address.getPostalCode();
 
-        String[] addrArray = { address.getAddressLine(1), address.getAddressLine(2), address.getAddressLine(3), address.getPostalCode()};
+        String[] addrArray = {address.getAddressLine(1), address.getAddressLine(2), address.getAddressLine(3), address.getPostalCode()};
         String addr = addrArray[0] + "\n" + addrArray[1] + ", " + addrArray[2] + "\n" + addrArray[3];
         descView.setText(description);
         locView.setText(addr);
 
+        //Formatting for passing address to external map app
         String outAddrString = "geo:0,0?q=" + addrStreet + "+" + addrCity + ",+" + addrState + "+" + addrZip;
 
         outAddrString = outAddrString.replaceAll(" ", "+");
@@ -66,10 +72,10 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     }
 
-    public void showMap(Uri geoLoc){
+    public void showMap(Uri geoLoc) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(geoLoc);
-        if(intent.resolveActivity(getPackageManager()) != null) {
+        if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         }
     }

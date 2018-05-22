@@ -1,3 +1,10 @@
+/*
+ Name: FavoritesContract.java
+ Written by: Charles Bein
+ Description: Database Contract for user favorites to be stored locally
+ NOTE: Not up to date (should have start and end dates), or implemented
+ */
+
 package com.i4i.hcvb.route26;
 
 
@@ -5,7 +12,7 @@ import android.provider.BaseColumns;
 
 public class FavoritesContract {
 
-    public FavoritesContract(){
+    public FavoritesContract() {
 
     }
 

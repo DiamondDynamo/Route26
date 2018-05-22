@@ -1,3 +1,9 @@
+/*
+ Name: CreateEventActivity.java
+ Written by: Charles Bein
+ Description: Allow users to create new activities
+ */
+
 package com.i4i.hcvb.route26;
 
 import android.app.DatePickerDialog;
@@ -7,11 +13,12 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Loader;
 import android.content.SharedPreferences;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -24,11 +31,8 @@ import org.threeten.bp.LocalTime;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZoneOffset;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import io.swagger.client.ApiClient;
@@ -44,13 +48,15 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
 
     String mUsername;
     String mPassword;
-
+    DatePickerDialog datePicker;
+    EditText nameField;
+    EditText streetField;
+    EditText cityField;
+    EditText stateField;
+    EditText zipField;
+    EditText descField;
     private int mStartYear, mStartMonth, mStartDay, mStartHour, mStartMinute;
     private int mEndYear, mEndMonth, mEndDay, mEndHour, mEndMinute;
-    DatePickerDialog datePicker;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,25 +66,31 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
         setSupportActionBar(toolbar);
 
 
+        setTitle("Create Event");
+
+        //This activity can only be accessed after successfully logging into the app, so these credentials should be here
         SharedPreferences preferences = getSharedPreferences("loginCredentials", MODE_PRIVATE);
 
         mUsername = preferences.getString("username", null);
         mPassword = preferences.getString("password", null);
 
-        final EditText nameField = findViewById(R.id.create_name);
+        nameField = findViewById(R.id.create_name);
 
-        final EditText streetField = findViewById(R.id.create_street);
-        final EditText cityField = findViewById(R.id.create_city);
-        final EditText stateField = findViewById(R.id.create_state);
-        final EditText zipField = findViewById(R.id.create_zip);
+        streetField = findViewById(R.id.create_street);
+        cityField = findViewById(R.id.create_city);
+        stateField = findViewById(R.id.create_state);
+        zipField = findViewById(R.id.create_zip);
 
         Button startDateButton = findViewById(R.id.create_start_date_button);
         final TextView startDateDisp = findViewById(R.id.create_start_date_disp);
 
+        final View focusView = findViewById(R.id.create_top);
 
         startDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                focusView.requestFocus();
 
                 Calendar c = Calendar.getInstance(TimeZone.getDefault());
 
@@ -110,13 +122,14 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
         });
 
 
-
         Button startTimeButton = findViewById(R.id.create_start_time_button);
         final TextView startTimeDisp = findViewById(R.id.create_start_time_disp);
 
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                focusView.requestFocus();
                 int h = 0;
                 int m = 0;
                 TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
@@ -124,25 +137,25 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         boolean pm = false;
                         mStartHour = hourOfDay;
-                        if(hourOfDay > 11) {
+                        if (hourOfDay > 11) {
                             pm = true;
                             if (hourOfDay > 12) {
                                 hourOfDay = hourOfDay - 12;
 
                             }
-                        } else if(hourOfDay == 0){
+                        } else if (hourOfDay == 0) {
                             hourOfDay = 12;
                         }
                         String outHour = String.valueOf(hourOfDay);
                         mStartMinute = minute;
                         String outMinute = String.valueOf(minute);
-                        if(minute < 10){
+                        if (minute < 10) {
                             outMinute = 0 + outMinute;
                         }
                         String outTime = outHour + ":" + outMinute;
-                        if(pm){
+                        if (pm) {
                             outTime = outTime + " PM";
-                        } else{
+                        } else {
                             outTime = outTime + " AM";
                         }
                         startTimeDisp.setText(outTime);
@@ -194,7 +207,6 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
         });
 
 
-
         Button endTimeButton = findViewById(R.id.create_end_time_button);
         final TextView endTimeDisp = findViewById(R.id.create_end_time_disp);
 
@@ -208,25 +220,25 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         boolean pm = false;
                         mEndHour = hourOfDay;
-                        if(hourOfDay > 11) {
+                        if (hourOfDay > 11) {
                             pm = true;
                             if (hourOfDay > 12) {
                                 hourOfDay = hourOfDay - 12;
 
                             }
-                        } else if(hourOfDay == 0){
+                        } else if (hourOfDay == 0) {
                             hourOfDay = 12;
                         }
                         String outHour = String.valueOf(hourOfDay);
                         mEndMinute = minute;
                         String outMinute = String.valueOf(minute);
-                        if(minute < 10){
+                        if (minute < 10) {
                             outMinute = 0 + outMinute;
                         }
                         String outTime = outHour + ":" + outMinute;
-                        if(pm){
+                        if (pm) {
                             outTime = outTime + " PM";
-                        } else{
+                        } else {
                             outTime = outTime + " AM";
                         }
                         endTimeDisp.setText(outTime);
@@ -240,91 +252,110 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
             }
         });
 
-        final EditText descField = findViewById(R.id.create_desc);
+        descField = findViewById(R.id.create_desc);
+
+        descField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
+                    submit();
+                    finish();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         Button submitButton = findViewById(R.id.create_submit);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Event newEvent = new Event();
-                Location outLoc = new Location();
-                Address outAddr = new Address();
-                android.location.Address exAddr = new android.location.Address(Locale.US);
-                Geocoder coder = new Geocoder(getApplicationContext());
-                newEvent.setName(nameField.getText().toString());
-
-
-
-                outAddr.setStreet(streetField.getText().toString());
-                outAddr.setCity(cityField.getText().toString());
-                outAddr.setState(stateField.getText().toString());
-                outAddr.setZip(zipField.getText().toString());
-                outAddr.setName("name");
-
-                outLoc.setLatitude(BigDecimal.valueOf(6.027456183070403));
-                outLoc.setLongitude(BigDecimal.valueOf(0.8008281904610115));
-                outLoc.setName("name");
-                outLoc.setAddress(outAddr);
-                newEvent.setLocation(outLoc);
-
-                LocalDate startDate = LocalDate.of(mStartYear, mStartMonth, mStartDay);
-                LocalTime startTime = LocalTime.of(mStartHour, mStartMinute);
-
-                OffsetDateTime startDateTime = OffsetDateTime.of(startDate, startTime, ZoneOffset.ofHours(-4));
-//                OffsetDateTime startDateTime = OffsetDateTime.of(mStartYear, mStartMonth, mStartDay, mStartHour, mStartMinute, 0, 0, ZoneOffset.ofHours(-4));
-                newEvent.setStartDatetime(startDateTime);
-
-
-                LocalDate endDate = LocalDate.of(mEndYear, mEndMonth, mEndDay);
-                LocalTime endTime = LocalTime.of(mEndHour, mEndMinute);
-
-                OffsetDateTime endDateTime = OffsetDateTime.of(endDate, endTime, ZoneOffset.ofHours(-4));
-//                OffsetDateTime endDateTime = OffsetDateTime.of(mEndYear, mEndMonth, mEndDay, mEndHour, mEndMinute, 0, 0, ZoneOffset.ofHours(-4));
-                newEvent.setEndDatetime(endDateTime);
-
-                newEvent.setDescription(descField.getText().toString());
-
-
-                Bundle args = new Bundle();
-                args.putSerializable("event", newEvent);
-                args.putString("username", mUsername);
-                args.putString("password", mPassword);
-                if(!newEvent.equals(args.getSerializable("event"))){
-                    System.err.println("event not serialized correctly");
-                }
-                startLoader(args);
+                submit();
+                finish();
             }
         });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    public void startLoader(Bundle args){
+    public void submit() {
+        //When submit is called, all data is gathered, and put into one Event object
+        Event newEvent = new Event();
+        Location outLoc = new Location();
+        Address outAddr = new Address();
+        newEvent.setName(nameField.getText().toString());
+
+
+        outAddr.setStreet(streetField.getText().toString());
+        outAddr.setCity(cityField.getText().toString());
+        outAddr.setState(stateField.getText().toString());
+        outAddr.setZip(zipField.getText().toString());
+
+        //Due to how the backend is set up, these fields are required, but they aren't used, so they are filled here with dummy data
+        outAddr.setName("name");
+
+
+        outLoc.setLatitude(BigDecimal.valueOf(6.027456183070403));
+        outLoc.setLongitude(BigDecimal.valueOf(0.8008281904610115));
+        outLoc.setName("name");
+        outLoc.setAddress(outAddr);
+        newEvent.setLocation(outLoc);
+
+        LocalDate startDate = LocalDate.of(mStartYear, mStartMonth, mStartDay);
+        LocalTime startTime = LocalTime.of(mStartHour, mStartMinute);
+
+        OffsetDateTime startDateTime = OffsetDateTime.of(startDate, startTime, ZoneOffset.ofHours(-4));
+        newEvent.setStartDatetime(startDateTime);
+
+
+        LocalDate endDate = LocalDate.of(mEndYear, mEndMonth, mEndDay);
+        LocalTime endTime = LocalTime.of(mEndHour, mEndMinute);
+
+        OffsetDateTime endDateTime = OffsetDateTime.of(endDate, endTime, ZoneOffset.ofHours(-4));
+        newEvent.setEndDatetime(endDateTime);
+
+        newEvent.setDescription(descField.getText().toString());
+
+
+        Bundle args = new Bundle();
+        args.putSerializable("event", newEvent);
+        args.putString("username", mUsername);
+        args.putString("password", mPassword);
+        if (!newEvent.equals(args.getSerializable("event"))) {
+            System.err.println("event not serialized correctly");
+        }
+        startLoader(args);
+    }
+
+    //Everything following this is code for the AsyncTaskLoader, which submits the new activity on a separate thread from the UI
+
+    public void startLoader(Bundle args) {
         getLoaderManager().initLoader(2, args, this).forceLoad();
     }
 
     @Override
-    public Loader<Event> onCreateLoader(int id, Bundle args){
+    public Loader<Event> onCreateLoader(int id, Bundle args) {
         return new PostAsyncTask(CreateEventActivity.this, (Event) args.get("event"), args.getString("username"), args.getString("password"));
     }
 
     @Override
-    public void onLoadFinished(Loader<Event> loader, Event data){
-        if(data.getName() != null){
+    public void onLoadFinished(Loader<Event> loader, Event data) {
+        if (data.getName() != null) {
             Toast.makeText(getApplicationContext(), "Event successfully posted", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<Event> loader){
+    public void onLoaderReset(Loader<Event> loader) {
     }
 
-    private static class PostAsyncTask extends AsyncTaskLoader<Event>{
+    private static class PostAsyncTask extends AsyncTaskLoader<Event> {
         Event mEvent;
         String mUsername;
         String mPassword;
-        PostAsyncTask(Context context, Object inEvent, String username, String password){
+
+        PostAsyncTask(Context context, Object inEvent, String username, String password) {
             super(context);
             mEvent = (Event) inEvent;
             mUsername = username;
@@ -332,7 +363,7 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
         }
 
         @Override
-        public Event loadInBackground(){
+        public Event loadInBackground() {
             ApiClient defaultClient = Configuration.getDefaultApiClient();
             HttpBasicAuth basicAuth = (HttpBasicAuth) defaultClient.getAuthentication("basicAuth");
             basicAuth.setUsername(mUsername);
@@ -340,9 +371,9 @@ public class CreateEventActivity extends AppCompatActivity implements LoaderMana
 
             EventApi apiInstance = new EventApi();
 
-            try{
+            try {
                 apiInstance.createEvent(mEvent);
-            } catch (ApiException e){
+            } catch (ApiException e) {
                 System.err.println("Exception when calling EventApi.createEvent");
                 System.err.println(e.getMessage());
                 e.printStackTrace();

@@ -1,27 +1,25 @@
+/*
+ Name: ResultsActivity.java
+ Written By: Charles Bein
+ Description: Displays either all available events, or some filtered or sorted set of the events
+ */
+
 package com.i4i.hcvb.route26;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.support.v4.app.LoaderManager;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.support.v4.content.Loader;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,6 +28,8 @@ import io.swagger.client.model.Event;
 import io.swagger.client.model.Location;
 
 public class ResultsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Event>> {
+
+    //TODO: Handle searches, implement filters
 
     EventAdapter eventAdapter;
     String query = null;
@@ -42,7 +42,6 @@ public class ResultsActivity extends AppCompatActivity implements LoaderManager.
         setSupportActionBar(toolbar);
 
         eventAdapter = new EventAdapter(this, new ArrayList<Event>());
-
 
 
         handleIntent(getIntent());
@@ -64,14 +63,16 @@ public class ResultsActivity extends AppCompatActivity implements LoaderManager.
                 android.location.Address address = new android.location.Address(Locale.US);
 
                 address.setPostalCode(srcAddress.getZip());
-                if(srcAddress.getName() != null) {
+                if (srcAddress.getName() != null) {
                     address.setAddressLine(0, srcAddress.getName());
                 }
-                    address.setAddressLine(1, srcAddress.getStreet());
-                    address.setAddressLine(2, srcAddress.getCity());
-                    address.setAddressLine(3, srcAddress.getState());
-                    address.setPostalCode(srcAddress.getZip());
+                address.setAddressLine(1, srcAddress.getStreet());
+                address.setAddressLine(2, srcAddress.getCity());
+                address.setAddressLine(3, srcAddress.getState());
+                address.setPostalCode(srcAddress.getZip());
 
+
+                //NOTE: Due to quirks with the server, fetched events have null as their start and end DateTimes, so they are currently unusable.
 
                 org.threeten.bp.OffsetDateTime srcStartDateTime = selEvent.getStartDatetime();
                 org.threeten.bp.OffsetDateTime srcEndDateTime = selEvent.getEndDatetime();
@@ -114,9 +115,8 @@ public class ResultsActivity extends AppCompatActivity implements LoaderManager.
     }
 
 
-
     @Override
-    protected void onNewIntent(Intent intent){
+    protected void onNewIntent(Intent intent) {
         handleIntent(intent);
     }
 

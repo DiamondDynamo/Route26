@@ -26,14 +26,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SearchActivity"
-            android:label="@string/title_activity_search"
-            android:theme="@style/AppTheme.NoActionBar" >
-
-            <meta-data android:name="android.app.searchable"
-                       android:resource="@xml/searchable" />
-        </activity>
-        <activity
             android:name=".ProducerDashboardActivity"
             android:label="@string/title_activity_producer_dashboard"
             android:theme="@style/AppTheme.NoActionBar" />

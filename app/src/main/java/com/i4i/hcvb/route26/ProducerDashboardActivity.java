@@ -1,32 +1,35 @@
+/*
+ Name: ProducerDashboardActivity.java
+ Written by: Charles Bein
+ Description: Splash screen for logged in users; allows browsing, creation of new events, and managing of existing ones
+ NOTE: Managing existing events is currently impossible
+ */
+
 package com.i4i.hcvb.route26;
 
 import android.app.LoaderManager;
+import android.app.SearchManager;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import java.math.BigInteger;
 
 import io.swagger.client.ApiException;
 import io.swagger.client.api.MemberApi;
-import io.swagger.client.model.Member;
 import io.swagger.client.model.MemberPublic;
 
 public class ProducerDashboardActivity extends AppCompatActivity
@@ -41,6 +44,8 @@ public class ProducerDashboardActivity extends AppCompatActivity
         setContentView(R.layout.activity_producer_dashboard);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        setTitle("Route 26 Artbeat");
 
         SharedPreferences preferences = getSharedPreferences("loginCredentials", MODE_PRIVATE);
         String uName = preferences.getString("username", null);
@@ -95,6 +100,26 @@ public class ProducerDashboardActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.producer_dashboard, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        final SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent intent = new Intent(getApplicationContext(), ResultsActivity.class);
+                startActivity(intent);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return true;
+            }
+        };
+
+        searchView.setOnQueryTextListener(queryTextListener);
         return true;
     }
 
@@ -104,13 +129,6 @@ public class ProducerDashboardActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_search) {
-            Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-            startActivity(intent);
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -124,7 +142,7 @@ public class ProducerDashboardActivity extends AppCompatActivity
         if (id == R.id.nav_settings) {
             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
-            return(true);
+            return (true);
         } else if (id == R.id.nav_logout) {
             SharedPreferences preferences = getSharedPreferences("logState", MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
@@ -138,7 +156,7 @@ public class ProducerDashboardActivity extends AppCompatActivity
 
             Intent intent = new Intent(getApplicationContext(), ConsumerDashboard.class);
             startActivity(intent);
-            return(true);
+            return (true);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -147,34 +165,35 @@ public class ProducerDashboardActivity extends AppCompatActivity
     }
 
     @Override
-    public Loader<MemberPublic> onCreateLoader(int id, Bundle args){
+    public Loader<MemberPublic> onCreateLoader(int id, Bundle args) {
         return new GetMember(ProducerDashboardActivity.this, args.getString("name"));
     }
 
     @Override
-    public void onLoadFinished(Loader<MemberPublic> loader, MemberPublic data){
+    public void onLoadFinished(Loader<MemberPublic> loader, MemberPublic data) {
         mMember = data;
     }
 
     @Override
-    public void onLoaderReset(Loader<MemberPublic> loader){
+    public void onLoaderReset(Loader<MemberPublic> loader) {
     }
 
-    private static class GetMember extends AsyncTaskLoader<MemberPublic>{
+    private static class GetMember extends AsyncTaskLoader<MemberPublic> {
         MemberPublic mMember;
         String mUsername;
-        GetMember(Context context, String inName){
+
+        GetMember(Context context, String inName) {
             super(context);
             mUsername = inName;
         }
 
         @Override
-        public MemberPublic loadInBackground(){
+        public MemberPublic loadInBackground() {
             try {
                 MemberApi memberApi = new MemberApi();
                 mMember = memberApi.getMemberByName(mUsername);
 
-            } catch (ApiException e){
+            } catch (ApiException e) {
                 System.err.println("Exception when calling MemberApi.getMemberByName");
                 e.printStackTrace();
             }
