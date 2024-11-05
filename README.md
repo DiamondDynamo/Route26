@@ -50,7 +50,7 @@ Once an appropriate operating system and Android Studio have been obtained, the 
 
 ## Authors
 
-* **Charles Bein** - *Initial work*
+* **Catherine Bein** - *Initial work*
 
 
 ## Acknowledgments
